@@ -4,57 +4,60 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace singleton
+namespace multiton
 {
     class Program
     {
         static void Main(string[] args)
         {
-            singleton ca = singleton.getInstance;
-            ca.printMessage();
+            multiton obj = multiton.checkobj("1");
+            obj.printDetails();
 
 
-            singleton ca1 = singleton.getInstance;
-            ca.printMessage();
+            multiton obj1 =multiton.checkobj("1");
+            obj1.printDetails();
+
+
+            multiton obj2 =multiton.checkobj("1");
+            obj2.printDetails();
             Console.ReadKey();
-                
-
-        }
-    }
-
-
-    public class singleton
-    {
-        public static singleton instance = null;
-        public static int counter = 0;
-        private singleton()
-        {
-            counter++;
-
-
-        }
-
-        public static singleton getInstance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    instance = new singleton();
-                    
-                }
-                return instance;
-            }
             
         }
+    }
 
-        public void printMessage()
+
+    class multiton
+    {
+        public static int count = 0;
+        public static readonly Dictionary<string, multiton> instances = new Dictionary<string, multiton>();
+        static object checklock = new object();
+
+        private multiton()
         {
-            Console.WriteLine("CAlling singleton method {0} times", +counter);
+            count++;
+            Console.WriteLine("create {0} object",count);
 
         }
 
+        public static multiton checkobj(string key)
+        {
+            lock (checklock)
+            {
+                if(!instances.ContainsKey(key))
+                {
+                    instances.Add(key, new multiton());
+                }
+            }
+            return instances[key];
+
+        }
+
+        public void printDetails()
+        {
+            Console.WriteLine("implemented multiton pattern");
+        }
+
+
 
     }
-    
 }
